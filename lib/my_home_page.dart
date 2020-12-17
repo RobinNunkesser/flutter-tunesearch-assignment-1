@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
+import 'package:tunesearch_assignment_1/search_term_dto.dart';
+import 'package:tunesearchexample_mockcore/tunesearchexample_mockcore.dart';
+import 'package:tunesearchexample_core_ports/tunesearchexample_core_ports.dart';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
@@ -10,6 +14,19 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+
+  var searchCommand = MockSearchTracksCommand();
+  final logger = Logger();
+
+  @override
+  void initState() {
+    super.initState();
+    searchCommand
+        .execute(
+        inDTO: SearchTermDTO(term: "Search term"))
+        .then(success)
+        .catchError((error) => failure(error));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,4 +46,13 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
+
+  void success(List<TrackCollection> collections) {
+    logger.i(collections.toString());
+  }
+
+  void failure(Exception error) {
+    logger.e(error);
+  }
+
 }
